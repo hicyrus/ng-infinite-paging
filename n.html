@@ -1,0 +1,121 @@
+<html>
+
+<head>
+<meta charset="utf-8">
+
+
+<script type='text/javascript' src='./jquery.1.8.0.js'></script>
+  <script type='text/javascript' src='http://apps.bdimg.com/libs/angular.js/1.2.2/angular.js'></script>
+  <script type='text/javascript' src='./ng-infinite-paging.js'></script>
+</head>
+
+<body>
+
+	<div ng-app='ftitApp'>
+<div ng-controller='PostListController'>
+
+    <div infinite-Paging='demo.nextPage()'  infinite-scroll-disabled='demo.busy' >
+
+    	<div ng-click="click_me()">点我</div>
+        <div ng-repeat='item in demo.posts'>
+            <div  id='{{"post_"+item.id}}'>
+               
+                <h2>{{item.title}}</h2>
+                <div>{{item.content}}</div>
+               
+            </div>
+        </div>
+
+        <div ng-show='!demo.busy'>Loading data...</div>
+    </div>
+
+
+
+</div>
+
+</div>
+
+<script type="text/javascript" >
+
+
+
+
+
+
+
+var ftitAppModule = angular.module('ftitApp', ['infinite-Paging']);
+
+ftitAppModule.config(function($locationProvider){
+
+		return  $locationProvider.html5Mode(true);
+});
+
+
+ftitAppModule.controller('PostListController', 
+    function ($scope, Demo,$location,$window) {
+        $scope.demo = new Demo();
+        $scope.click_me = function(){
+        	alert($location.path());
+        	//$location.url("/dr.html");
+        	
+        	alert("the llll");
+
+        };
+       
+});
+
+// 创建后台数据交互工厂
+ftitAppModule.factory('Demo', function ($http,$location,$window) {
+	//alert("lll");
+    var Demo = function () {
+        this.posts = [{"id":1,"title":"跨越53年，图解历任007的那些装备","content":"放下手机，看看你家里那台很久不用的电脑吧——它陪伴你从你大学毕业一直到现在，处理器、显卡和内存早已过时。用它看 4K 电影就甭想了，打一局英雄联盟，团战的时候都卡……根据英特尔的数据，人们正在使用的个人电脑服役寿命大多在 3- 5 年中间。而近几年来，计算机的处理器技术已经获得了突飞猛进的发展，带来了重大的体验提升，这些使用过时电脑的用户就无法享受了。前几年，想要畅玩最新的大型 3D 游戏，比如《侠盗猎车手》（GTA）、《辐射》（Fallout）、《孤岛危机》（Crysis），或者在 PC <br/>上进行高强度图像制作和视频剪辑，除了购置强大的 CPU 之外，用户往往还要搭上一块价格不菲的独立显卡。这种情况并不理想，意味着对性能要求较高的用户只能在台式机上完成工作/享受游戏。如果选择笔记本电脑，高性能往往意味着笨重又不够时尚。因此，一款同时具有高颜值和高性能，兼顾轻娱乐、轻办公体验的产品无疑是用户首选。现在呢？Not Anymore！经过最近几年的发展，英特尔一直以来坚持的核芯显卡技术正在逐渐追赶上最顶级的独立显卡。全新的锐炬（Iris）显卡将提供超越同级 CPU + 独立显卡 30% 以上的额外性能。以后再换电脑，靠 CPU 集成的锐炬显卡就够用了……"}];
+        this.busy = false;
+        this.after = '';
+        this.page = 1;
+    };
+    
+    Demo.prototype.nextPage = function () {
+
+            if (this.busy) return;
+ 
+             var url = "http://localhost/nag/pp.php?id=" + this.page;
+             var _this = this;
+
+            $http.get(url).success(function(data){
+                        _this.busy = false;
+
+                         var items = data;
+                        for (var i = 0; i < items.length; i++) {
+                            _this.posts.push(items[i]);
+                        }
+                        _this.page =  _this.posts[_this.posts.length - 1].id;
+                        _this.busy = false;
+                      
+                                
+                       
+                        //  alert(response.posts[0].post_title);
+                        //console.log("post_title: "+response.posts[0].post_title);
+                      //  MonstroWP.WPData.title = response.posts[0].post_title;
+                                //real  good
+                           // $location.url("n/"+thepid+".html");
+                        //  ga('send', 'pageview', { page: $location.url() });
+                        //  console.log("page: "+$location.url());
+             
+            });
+
+
+        };
+
+
+       
+
+    return Demo;
+});
+
+
+</script>
+
+</body>
+</html>
+
+
